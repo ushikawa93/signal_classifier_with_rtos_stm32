@@ -1,0 +1,14 @@
+../Core/Inc/signals.h:30:5:getTIMER_DAC	1
+../Core/Inc/signals.h:36:5:getRandom	2
+../Core/Inc/signals.h:44:6:addNoise	4
+../Core/Inc/signals.h:60:6:generateSignalsWithNoise	1
+../Core/Src/app_freertos.c:117:6:MX_FREERTOS_Init	1
+../Core/Src/app_freertos.c:161:6:StartDefaultTask	1
+../Core/Src/app_freertos.c:177:6:StartBlinkyTask	1
+../Core/Src/app_freertos.c:186:6:StartUartTask	17
+../Core/Src/app_freertos.c:290:16:uart_getchar_timeout	2
+../Core/Src/app_freertos.c:301:6:StartDacTask	5
+../Core/Src/app_freertos.c:341:6:StartAdcTask	9
+../Core/Src/app_freertos.c:386:6:procesar_adc	2
+../Core/Src/app_freertos.c:398:6:HAL_ADC_ConvHalfCpltCallback	3
+../Core/Src/app_freertos.c:417:6:HAL_ADC_ConvCpltCallback	3

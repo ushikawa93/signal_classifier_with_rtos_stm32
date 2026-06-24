@@ -1,0 +1,33 @@
+# STM32CubeIDE - Build outputs
+Debug/
+Release/
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+
+# STM32CubeIDE - IDE files
+.cproject
+.project
+.settings/
+*.launch
+
+# STM32CubeIDE - Makefiles generados (se regeneran solos)
+makefile
+objects.list
+objects.mk
+sources.mk
+**/*.d
+**/*.o
+
+# Logs de captura de datos / archivos temporales
+*.txt
+*.log
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Ejecutable de python
+*.exe
