@@ -4,6 +4,8 @@ Clasificador de formas de onda en tiempo real utilizando NanoEdge AI Studio sobr
 
 El sistema utiliza FreeRTOS para ejecutar en paralelo la generación de señales, adquisición de datos, clasificación y comunicación UART mediante tareas independientes sincronizadas con Task Notifications.
 
+El proyecto incluye tanto el firmware embebido para STM32 como una aplicación de escritorio en Python para monitoreo, captura y visualización de señales en tiempo real.
+
 ## Descripción
 
 El DAC genera señales sinusoidales, cuadradas o triangulares mediante DMA. Estas señales son adquiridas por el ADC utilizando DMA circular con doble buffer.
@@ -148,6 +150,55 @@ Configuración:
 * STM32CubeMX
 * FreeRTOS
 * NanoEdge AI Studio
+
+## Aplicación de Monitoreo para PC
+
+El repositorio incluye una aplicación de escritorio desarrollada en Python utilizando PySide6 para interactuar con el STM32 mediante UART.
+
+### Funcionalidades
+
+* Conexión y desconexión serie.
+* Selección automática de puertos COM disponibles.
+* Configuración de baudrate.
+* Envío de comandos al firmware.
+* Visualización de mensajes RX/TX en tiempo real.
+* Exportación de logs a archivos de texto.
+* Visualización gráfica de los buffers adquiridos por el ADC.
+* Acumulación de múltiples buffers para inspección temporal de la señal.
+
+### Formato de Datos
+
+La aplicación interpreta automáticamente los mensajes JSON enviados por el firmware durante la captura:
+
+```json
+{
+    "ts": "00:00:00",
+    "Muestras": [ ... ]
+}
+```
+
+Los datos recibidos son procesados y representados gráficamente en tiempo real.
+
+### Dependencias
+
+```bash
+pip install PySide6 pyserial
+```
+
+### Ejecución
+
+```bash
+python main.py
+```
+
+La herramienta resulta útil para:
+
+* Verificar el funcionamiento del ADC.
+* Visualizar datasets antes de exportarlos.
+* Validar la generación de señales.
+* Depurar la comunicación serie.
+* Analizar rápidamente los datos utilizados por NanoEdge AI.
+
 
 ### MCU
 
