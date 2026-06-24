@@ -216,3 +216,4 @@ Características implementadas:
 * Control de frecuencia.
 * Inyección de ruido.
 * Arquitectura basada en FreeRTOS.
+* Aplicacion de monitoreo basada en Python
