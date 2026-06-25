@@ -26,6 +26,16 @@ La comunicación entre tareas se realiza mediante Task Notifications de FreeRTOS
 
 ## Arquitectura
 
+```mermaid
+graph LR
+    DAC_Task --> DAC_DMA
+    DAC_DMA --> ADC_DMA
+    ADC_DMA --> ADC_Task
+    UART_Task --> ADC_Task
+    UART_Task --> DAC_Task
+    ADC_Task --> NanoEdge
+```
+
 El firmware se divide en las siguientes tareas:
 
 ### DAC Task
