@@ -1,0 +1,272 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{geometry}
+\usepackage{amsmath}
+
+\geometry{margin=2.5cm}
+
+\title{Clasificador de Señales en Tiempo Real sobre STM32 utilizando FreeRTOS y NanoEdge AI}
+\author{Matías Oliva}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Introducción}
+
+Este informe describe el desarrollo de un sistema embebido capaz de generar, adquirir y clasificar señales en tiempo real utilizando una placa STM32 NUCLEO-U575ZI-Q.
+
+El proyecto combina técnicas de procesamiento digital de señales, sistemas operativos de tiempo real y aprendizaje automático embebido mediante NanoEdge AI Studio.
+
+El objetivo principal consiste en identificar automáticamente diferentes formas de onda generadas por el propio sistema utilizando un modelo de clasificación ejecutado localmente en el microcontrolador.
+
+\section{Objetivos}
+
+\begin{itemize}
+\item Generar señales sinusoidales, cuadradas y triangulares utilizando el DAC.
+\item Adquirir las señales mediante el ADC.
+\item Construir un dataset para entrenamiento.
+\item Entrenar un clasificador utilizando NanoEdge AI Studio.
+\item Implementar el modelo en un STM32.
+\item Utilizar FreeRTOS para coordinar las distintas tareas del sistema.
+\item Desarrollar una interfaz gráfica para monitoreo y captura de datos.
+\end{itemize}
+
+\section{Hardware Utilizado}
+
+\begin{itemize}
+\item STM32 NUCLEO-U575ZI-Q
+\item DAC interno
+\item ADC interno
+\item Comunicación UART
+\item Cable de conexión DAC-ADC
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar fotografía del hardware utilizado}}
+\caption{Montaje experimental}
+\end{figure}
+
+\section{Arquitectura General}
+
+La arquitectura implementada se basa en la generación de señales mediante DAC, adquisición mediante ADC y posterior clasificación utilizando un modelo de Machine Learning.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar diagrama general del sistema}}
+\caption{Arquitectura general}
+\end{figure}
+
+\section{Generación de Señales}
+
+La generación de señales se implementó utilizando:
+
+\begin{itemize}
+\item DAC interno.
+\item DMA en modo circular.
+\item Temporizador como trigger.
+\item Tablas precalculadas de muestras.
+\item Generador de ruido interno del STM32.
+\end{itemize}
+
+Las formas de onda implementadas son:
+
+\begin{itemize}
+\item Sinusoidal.
+\item Cuadrada.
+\item Triangular.
+\end{itemize}
+
+\subsection{Frecuencia de Muestreo}
+
+Describir aquí la frecuencia de actualización del DAC y el cálculo realizado para obtener las frecuencias de salida.
+
+\section{Adquisición de Datos}
+
+La adquisición se realiza mediante el ADC utilizando DMA circular.
+
+Se implementó un buffer doble de 256 muestras para permitir el procesamiento simultáneo de los datos mientras continúa la adquisición.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar captura de la configuración ADC/DMA}}
+\caption{Configuración ADC-DMA}
+\end{figure}
+
+\subsection{Half Transfer y Transfer Complete}
+
+Explicar el uso de los eventos:
+
+\begin{itemize}
+\item Half Complete.
+\item Complete.
+\end{itemize}
+
+y cómo permiten procesar bloques de datos sin detener la adquisición.
+
+\section{Dataset para Entrenamiento}
+
+Para entrenar el clasificador se implementó un modo de captura que transmite muestras por UART en formato JSON.
+
+Ejemplo:
+
+\begin{lstlisting}
+{
+"ts":"00:00:00",
+"Muestras":[...]
+}
+\end{lstlisting}
+
+Los datos fueron almacenados y utilizados posteriormente en NanoEdge AI Studio.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar captura de los datos capturados}}
+\caption{Captura de datos para entrenamiento}
+\end{figure}
+
+\section{Entrenamiento con NanoEdge AI Studio}
+
+Describir:
+
+\begin{itemize}
+\item Dataset utilizado.
+\item Número de clases.
+\item Configuración del entrenamiento.
+\item Resultados obtenidos.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar captura de NanoEdge AI Studio}}
+\caption{Entrenamiento del clasificador}
+\end{figure}
+
+\section{Implementación del Modelo en STM32}
+
+El modelo generado fue integrado al firmware mediante las bibliotecas proporcionadas por NanoEdge AI Studio.
+
+Describir:
+
+\begin{itemize}
+\item Inicialización.
+\item Conversión de muestras.
+\item Proceso de clasificación.
+\end{itemize}
+
+\section{Migración a FreeRTOS}
+
+Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial.
+
+Posteriormente se migró a FreeRTOS para mejorar la organización del software y desacoplar las distintas funcionalidades.
+
+\subsection{Tareas Implementadas}
+
+\begin{itemize}
+\item DAC Task.
+\item ADC Task.
+\item UART Task.
+\item Blinky Task.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar captura de STM32CubeMX mostrando FreeRTOS}}
+\caption{Configuración de FreeRTOS}
+\end{figure}
+
+\subsection{Comunicación entre Tareas}
+
+La sincronización se realiza mediante Task Notifications.
+
+Describir:
+
+\begin{itemize}
+\item ADC_HALF_READY
+\item ADC_FULL_READY
+\item ADC_START
+\end{itemize}
+
+\section{Aplicación de Monitoreo en Python}
+
+Se desarrolló una aplicación de escritorio utilizando PySide6 para interactuar con el sistema.
+
+Las funcionalidades implementadas incluyen:
+
+\begin{itemize}
+\item Conexión serie.
+\item Visualización de mensajes UART.
+\item Captura de buffers.
+\item Graficación en tiempo real.
+\item Exportación de logs.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar captura principal de la GUI}}
+\caption{Aplicación de monitoreo}
+\end{figure}
+
+\section{Resultados}
+
+Presentar ejemplos de:
+
+\begin{itemize}
+\item Señales adquiridas.
+\item Clasificaciones obtenidas.
+\item Nivel de confianza.
+\item Desempeño del sistema.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.8\textwidth}{\centering
+Insertar resultados de clasificación}}
+\caption{Resultados obtenidos}
+\end{figure}
+
+\section{Conclusiones}
+
+El proyecto permitió integrar distintas tecnologías dentro de una única plataforma embebida:
+
+\begin{itemize}
+\item STM32.
+\item DMA.
+\item FreeRTOS.
+\item NanoEdge AI.
+\item Comunicación UART.
+\item Aplicaciones de escritorio en Python.
+\end{itemize}
+
+Además, se obtuvo un sistema capaz de clasificar señales en tiempo real utilizando recursos limitados de procesamiento.
+
+\section{Trabajo Futuro}
+
+\begin{itemize}
+\item Incorporar señales externas.
+\item Agregar nuevas clases.
+\item Implementar FFT en tiempo real.
+\item Incorporar almacenamiento en memoria SD.
+\item Visualización remota mediante red.
+\end{itemize}
+
+\end{document}
