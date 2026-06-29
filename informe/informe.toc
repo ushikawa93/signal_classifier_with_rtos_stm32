@@ -14,7 +14,7 @@
 \contentsline {section}{\numberline {11}Migración a FreeRTOS}{6}{section.11}%
 \contentsline {subsection}{\numberline {11.1}Tareas Implementadas}{6}{subsection.11.1}%
 \contentsline {subsection}{\numberline {11.2}Comunicación entre Tareas}{6}{subsection.11.2}%
-\contentsline {section}{\numberline {12}Aplicación de Monitoreo en Python}{6}{section.12}%
+\contentsline {section}{\numberline {12}Aplicación de Monitoreo en Python}{7}{section.12}%
 \contentsline {section}{\numberline {13}Resultados}{7}{section.13}%
 \contentsline {section}{\numberline {14}Conclusiones}{7}{section.14}%
-\contentsline {section}{\numberline {15}Trabajo Futuro}{7}{section.15}%
+\contentsline {section}{\numberline {15}Trabajo Futuro}{8}{section.15}%

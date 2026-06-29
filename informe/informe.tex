@@ -180,7 +180,7 @@ Cuando el usuario lo pide se imprimen por puerto UART muestras en este formato. 
 
 \section{Entrenamiento con NanoEdge AI Studio}
 
-Describir:
+Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, ondas cuadradas y triangulares que fueron utilizadas para entrenar un modelo de clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido por el software se utilizó un shell script disponible en COMPLETAR. 
 
 \begin{itemize}
 \item Dataset utilizado.
@@ -210,7 +210,7 @@ Describir:
 
 \section{Migración a FreeRTOS}
 
-Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial.
+Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial, con modods configurados a través de \texttt{defines}. Esta implementación preeliminar está disponible en \url{https://github.com/ushikawa93/signal_classifier_stm32}.
 
 Posteriormente se migró a FreeRTOS para mejorar la organización del software y desacoplar las distintas funcionalidades.
 
