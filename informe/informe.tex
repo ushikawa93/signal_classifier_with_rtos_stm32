@@ -12,6 +12,16 @@
 
 \geometry{margin=2.5cm}
 
+
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	urlcolor=blue,
+	pdfborder={0 0 0}, 
+	citecolor=black,
+	pdfborderstyle={/S/U/W 1} 
+}
+
 \title{Clasificador de Señales en Tiempo Real sobre STM32 utilizando FreeRTOS y NanoEdge AI}
 \author{Matías Oliva}
 \date{\today}
@@ -29,7 +39,9 @@ Este informe describe el desarrollo de un sistema embebido capaz de generar, adq
 
 El proyecto combina técnicas de procesamiento digital de señales, sistemas operativos de tiempo real y aprendizaje automático embebido mediante NanoEdge AI Studio.
 
-El objetivo principal consiste en identificar automáticamente diferentes formas de onda generadas por el propio sistema utilizando un modelo de clasificación ejecutado localmente en el microcontrolador.
+El objetivo principal es identificar automáticamente diferentes formas de onda generadas por el propio sistema utilizando un modelo de clasificación ejecutado localmente en el microcontrolador.
+
+El proyecto está disponible en \url{https://github.com/ushikawa93/signal_classifier_with_rtos_stm32}.
 
 \section{Objetivos}
 
@@ -55,8 +67,7 @@ El objetivo principal consiste en identificar automáticamente diferentes formas
 
 \begin{figure}[H]
 \centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar fotografía del hardware utilizado}}
+\includegraphics[scale=0.3]{imagenes/FotoHW.png}
 \caption{Montaje experimental}
 \end{figure}
 
@@ -66,17 +77,30 @@ La arquitectura implementada se basa en la generación de señales mediante DAC,
 
 \begin{figure}[H]
 \centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar diagrama general del sistema}}
+\includegraphics[scale=0.6]{imagenes/EsquemaGeneral.png}
 \caption{Arquitectura general}
 \end{figure}
 
-\section{Generación de Señales}
+\section{Interface de usuario (tarea \texttt{StartUartTask})}
+
+A través del puerto UART el sistema presenta al usuario un menú definido en el header \texttt{menu.h}. En este se le presentan las opciones:
+
+\begin{itemize}
+	\item 1 - Adquisicion (captura de datos)
+	\item 2 - Clasificacion
+	\item 3 - Configurar señales de DAC
+	\item 4 - Configurar frecuencia de DAC
+	\item 5 - Configurar nivel de ruido de DAC
+\end{itemize}
+
+La operación del menú y su derivación a las tareas correspondientes están controladas por la tarea \texttt{StartUartTask}.
+
+\section{Generación de Señales (tarea \texttt{StartDacTask})}
 
 La generación de señales se implementó utilizando:
 
 \begin{itemize}
-\item DAC interno.
+\item DAC interno (12 bits).
 \item DMA en modo circular.
 \item Temporizador como trigger.
 \item Tablas precalculadas de muestras.
@@ -91,37 +115,51 @@ Las formas de onda implementadas son:
 \item Triangular.
 \end{itemize}
 
-\subsection{Frecuencia de Muestreo}
 
-Describir aquí la frecuencia de actualización del DAC y el cálculo realizado para obtener las frecuencias de salida.
+\subsection{Control del DAC}
 
-\section{Adquisición de Datos}
+La tarea \texttt{StartDacTask} (definido en \texttt{app\_freertos.h}) junto con el header \texttt{signals.h} controlan la operación del DAC.
 
-La adquisición se realiza mediante el ADC utilizando DMA circular.
+Esta tarea comienza agregándole ruido a las LU tables (\texttt{generateSignalsWithNoise(int)}) y luego lanza el DAC por DMA. Este esquema tiene la limitación de que el ruido se calcula solo en este punto, por lo que todos los ciclos de la señal tienen los mismos esquemas de ruido (es decir, el ruido es periódico). En un futuro podría mejorarse este punto recalculando las tablas en alguna interrupción que se de al finalizar el buffer del DMA. 
 
-Se implementó un buffer doble de 256 muestras para permitir el procesamiento simultáneo de los datos mientras continúa la adquisición.
+La transferencia memoria- DAC es disparada por el temporizador TIM2. POr defecto este timer esta configurado para generar una señal de 1 segundo de periodo, a partir de una LU table de 128 puntos (triggers cada 1/128 s). 
+
+Esta tarea esta atenta a tres eventos que pueden disparase desde la UART que permiten mnodificar la forma de onda:
+
+\begin{itemize}
+	\item \texttt{DAC\_WAVE}: Cambio de la forma de onda.
+	\item \texttt{DAC\_NOISE}: Cambia en nivel de ruido en la señal. Para ello detiene el DAC y vuelve a llamar a \texttt{generateSignalsWithNoise(int)}. El nivel de ruido se puede configurar de 0 a 4095 (cuentas del DAC).
+	\item \texttt{DAC\_FREQ}: Cambia la frecuencia de actualización del DAC, llamando a la función \texttt{getTIMER\_ DAC(int)} para calcular el periodo del timer deseado a partir de la frecuencia de señal objetivo.
+\end{itemize}
+
+
+\section{Adquisición de Datos (tarea \texttt{StartAdcTask})}
+
+La adquisición se realiza mediante el ADC utilizando DMA circular. Su ejecución esta definida en la tarea \texttt{StartAdcTask}. Esta configura la adquisición por DMA al principio de la operación y luego queda esperando eventos que señalizan bloques de datos listos para procesar.
+
+Para ello se implementó un buffer doble de 256 muestras para permitir el procesamiento simultáneo de los datos mientras continúa la adquisición. La transacción del DMA es disparada por el TIM15, configurado para funcionar a 100 Hz (frecuencia de muestreo).
 
 \begin{figure}[H]
 \centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar captura de la configuración ADC/DMA}}
+\includegraphics[scale=0.5]{imagenes/adquisicion_bloques.png}
 \caption{Configuración ADC-DMA}
 \end{figure}
 
 \subsection{Half Transfer y Transfer Complete}
 
-Explicar el uso de los eventos:
+A medida que se llena el buffer del ADC se disparan dos interrupciones que le avisan a la tarea \texttt{StartAdcTask} que hay datos disponibles para procesar
 
 \begin{itemize}
-\item Half Complete.
-\item Complete.
+\item \textbf{Half Complete}. Las primeras 128 muestras del buffer están disponibles
+\item \textbf{Complete}. Las segundas 128 muestras del buffer están disponibles.
 \end{itemize}
 
-y cómo permiten procesar bloques de datos sin detener la adquisición.
+En esta etapa del desarrollo de este proyecto el procesamiento de los datos consiste en imprimir, si el usuario pidió datos desde la UART, los bloques correspondientes a través del puerto serie.
+
 
 \section{Dataset para Entrenamiento}
 
-Para entrenar el clasificador se implementó un modo de captura que transmite muestras por UART en formato JSON.
+Para entrenar el clasificador se implementó un modo de captura que transmite muestras por UART en formato JSON. 
 
 Ejemplo:
 
@@ -132,12 +170,11 @@ Ejemplo:
 }
 \end{lstlisting}
 
-Los datos fueron almacenados y utilizados posteriormente en NanoEdge AI Studio.
+Cuando el usuario lo pide se imprimen por puerto UART muestras en este formato. Estos se pueden almacenar y utilizar para entrenar algoritmos de clasificación utilizando NanoEdge AI Studio.
 
 \begin{figure}[H]
 \centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar captura de los datos capturados}}
+\includegraphics[scale=0.8]{imagenes/adquisicion.png}
 \caption{Captura de datos para entrenamiento}
 \end{figure}
 
@@ -200,9 +237,9 @@ La sincronización se realiza mediante Task Notifications.
 Describir:
 
 \begin{itemize}
-\item ADC_HALF_READY
-\item ADC_FULL_READY
-\item ADC_START
+\item ADC\_HALF\_READY
+\item ADC\_FULL\_READY
+\item ADC\_START
 \end{itemize}
 
 \section{Aplicación de Monitoreo en Python}
