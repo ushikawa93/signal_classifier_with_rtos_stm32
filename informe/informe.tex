@@ -9,6 +9,8 @@
 \usepackage{listings}
 \usepackage{geometry}
 \usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{float}
 
 \geometry{margin=2.5cm}
 
@@ -180,33 +182,59 @@ Cuando el usuario lo pide se imprimen por puerto UART muestras en este formato. 
 
 \section{Entrenamiento con NanoEdge AI Studio}
 
-Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, ondas cuadradas y triangulares que fueron utilizadas para entrenar un modelo de clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido por el software se utilizó un shell script disponible en COMPLETAR. 
+Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, 
+ondas cuadradas y triangulares que fueron utilizadas para entrenar un modelo de 
+clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido 
+por el software se utilizaron scripts disponibles en la carpeta \texttt{/utils} del 
+proyecto. En esta carpeta también hay disponible un script de matlab para graficar 
+segmentos de las señales obtenidas y verificar su integridad.
 
 \begin{itemize}
-\item Dataset utilizado.
-\item Número de clases.
-\item Configuración del entrenamiento.
-\item Resultados obtenidos.
+	\item \textbf{Dataset utilizado:} Los datos específicos que se utilizaron para 
+	entrenar el modelo se encuentran en la carpeta \texttt{nanoEdgeAI/dat}.
+	
+	\item \textbf{Número de clases:} El modelo se configuró con tres clases: 
+	\textit{OndaSinusoidal}, \textit{OndaCuadrada} y \textit{OndaTriangular}.
+	
+	\item \textbf{Configuración del entrenamiento:} Se empleó la versión 5.1.1 de 
+	NanoEdge AI Studio sobre la plataforma NUCLEO-U575ZI-Q, con señales de 128 
+	columnas por muestra y 9 señales en total por clase. La búsqueda de la librería 
+	óptima se realizó mediante el benchmark automático (\textit{autoML}) de la 
+	herramienta, evaluando 17838 librerías candidatas durante 42 minutos con la 
+	configuración por defecto.
+	
+	\item \textbf{Resultados obtenidos:} El benchmark finalizó seleccionando una 
+	librería con un \textit{Quality Index} de 99/100 puntos y una 
+	\textit{Balanced Accuracy} del 100\%, con un consumo de memoria de 2.4 KB de 
+	RAM (incluyendo buffer de 0.6 KB) y 2.7 KB de Flash. La matriz de confusión 
+	sobre el conjunto de validación no presentó ningún error de clasificación entre 
+	las tres clases, tal como se muestra en la Figura~\ref{fig:nanoedge_resultado}.
 \end{itemize}
 
 \begin{figure}[H]
-\centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar captura de NanoEdge AI Studio}}
-\caption{Entrenamiento del clasificador}
+	\centering
+	\includegraphics[width=0.9\textwidth]{imagenes/nanoEdgeAI.png}
+	\caption{Resultados finales del benchmark en NanoEdge AI Studio.}
+	\label{fig:nanoedge_resultado}
 \end{figure}
+
 
 \section{Implementación del Modelo en STM32}
 
 El modelo generado fue integrado al firmware mediante las bibliotecas proporcionadas por NanoEdge AI Studio.
 
-Describir:
+El modelo se inicializa antes de lanzar las tareas, mediante la funcion \texttt{neai\_classification\_init()} provista en la librería.
 
-\begin{itemize}
-\item Inicialización.
-\item Conversión de muestras.
-\item Proceso de clasificación.
-\end{itemize}
+Luego, dentro de la tarea que controla el UART en la librería, se agregó la clasificación de señales. En este punto, cuando es requerido por el usuario se utiliza la función \texttt{neai\_classification()}, pasandole el contenido del buffer proveniente del ADC que este completo en ese momento (puede ser la primera o la segunda mitad del ADC\_BUF). Antes de utilizarse directamente las muestras se conviertes de entero a punto flotante, por requerimientos de la librería.
+
+Usando este esquema el sistema decide entre alguna de las tres ondas lo que esta muestreando en el ADC, y expone los resultados junto con el nivel de similaridad obtenido.
+
+\begin{figure}[H]
+	\centering
+	\fbox{\parbox{0.8\textwidth}{\centering
+			Captura de pantalla de clasificador}}
+	\caption{Proceso de clasificación}
+\end{figure}
 
 \section{Migración a FreeRTOS}
 
@@ -214,33 +242,9 @@ Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial,
 
 Posteriormente se migró a FreeRTOS para mejorar la organización del software y desacoplar las distintas funcionalidades.
 
-\subsection{Tareas Implementadas}
 
-\begin{itemize}
-\item DAC Task.
-\item ADC Task.
-\item UART Task.
-\item Blinky Task.
-\end{itemize}
 
-\begin{figure}[H]
-\centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar captura de STM32CubeMX mostrando FreeRTOS}}
-\caption{Configuración de FreeRTOS}
-\end{figure}
 
-\subsection{Comunicación entre Tareas}
-
-La sincronización se realiza mediante Task Notifications.
-
-Describir:
-
-\begin{itemize}
-\item ADC\_HALF\_READY
-\item ADC\_FULL\_READY
-\item ADC\_START
-\end{itemize}
 
 \section{Aplicación de Monitoreo en Python}
 
@@ -256,12 +260,28 @@ Las funcionalidades implementadas incluyen:
 \item Exportación de logs.
 \end{itemize}
 
+Esta implementación está disponible en \texttt{/python\_gui}, con un ejecutable ubicado en \texttt{/python\_ gui/dist/main.exe}
+
 \begin{figure}[H]
-\centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar captura principal de la GUI}}
-\caption{Aplicación de monitoreo}
+	\centering
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imagenes/python_gui_1.png}
+		\caption{Descripción imagen 1}
+		\label{fig:img1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imagenes/python_gui_2.png}
+		\caption{Descripción imagen 2}
+		\label{fig:img2}
+	\end{subfigure}
+	\caption{Aplicación de Monitoreo en Python}
+	\label{fig:monitoreo_python}
 \end{figure}
+
+
 
 \section{Resultados}
 

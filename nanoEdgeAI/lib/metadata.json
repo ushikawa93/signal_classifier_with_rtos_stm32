@@ -7,13 +7,13 @@
         "OndaCuadrada"
     ],
     "commit": "HEAD",
-    "compilation_date": "2026-04-01T21:40:57.316631",
+    "compilation_date": "2026-06-29T20:17:17.947124",
     "compilation_flags": {
         "float_abi": "hard",
         "fshort_enums": true,
         "short_wchar": false
     },
-    "compilation_str": "{'compilation_dict':{'request_type':'library','api':{'env':'PROD','version':'v3'},'version':{'web_api':{'env':'PROD','version':'v3'},'local_api':{'version':'2026.03.05.0','platform':'win64'},'studio':'5.1.1'},'compilation_flags':{'float_abi':'hard','short_wchar':false,'fshort_enums':true,'use_knowledge':false},'mcu':'cortex-m33_st_stm32u5_nucleo-u575zi-q','sensor':'','accelerators':[],'request_origin':'manual','algorithm_type':'classifier','lib_version':'v3_3938dd5','info':{'progression':{'evals_done':20000,'optimization_progress':1.0,'elapsed_time':2539,'cpu_info':{'cpu_nb_cores':16,'cpu_nb_cores_for_optimization':11},'state':'finished'},'max_ram':786000,'max_flash':2048000,'optimization_global_id':'4ff3d223124c2e6065a08437eee51212','version':{'local_api':'2026.03.05.0','studio':'5.1.1'},'creation_date':'2026-04-01T20:45:35+00:00'},'class_names':'OndaTriangular,OndaSinusoidal,OndaCuadrada','results':[{'result_id':47,'combination':{'type':'classification','name':'SVM','params':{'c':3.6905663765325394,'beta':5.0,'tmp_dir_path':null},'preprocessing_chain':[{'detrend':{'method':'average'}},{'stft':{'windows':2,'window_type':'none'}},{'extract_features':{'features':['n5','n75','shape_factor','peak_to_peak','var','kurtosis','minimum','std','num_zero_crossings','num_mean_crossings','clearance_factor','peak_value','median','entropy','maximum','rms','skewness','n25'],'entropy_bins':20}},{'normalize':{'method':'zscore'}},{'pooling':{'strategy':'max','output_percentage':68}}]},'model':null,'performance':{'performance':{'score':0.99,'main_kpi':1.0},'memory_usage':{'estimated_ram':1816,'estimated_flash':588,'estimated_flash_knowledge':null}},'learning_min_lines':null,'knowledge':'eNrNVltP4zgU_iujPE9Q7gkrzUOgoRQKFFooLUKW6ziXIbFTO0nTIP772kkZYGdnQWi0u0_N-RIfn_N959JHpWC4YBRhzlMSK398uXtUQlwyTEJhPCopKaoShGmOCU8p6TACOMyLDHNh2br39YtAIgzLinWQbvQQSiAhOOugJ4HQqvxtvhAlJW5KYZIqywSQ4zKhMmQF1pjBGCtP4rtHhZdR-X9IxLHeyaMPFaQkTFF34k77Kk7di482AqQbwNMWP3vaQYjiKEpRiknJOx8hLKEk4djiIz-YB-384RAY5zEcH5DhWbDwT7-ffl8tfP_S9xXhJyy3hXSqRBmFpWlIjCeww-762xHNRY1wjkNAqrzYAsgY3Ir3JauwJHkXjAzAeAnt2TGh5FkLkSiDqHxNy6d0-QWXn6ov711ZIqHKjnpZa_L1Kwd3CrElacS1f3AHIpElZdIuMHwAJQXyV9o17OCHipWUp1w-5ylJ8yrvTpdh56vKQYsZBYjRri35M5pjSN6iKMOQQYJ-urSGWYU7_zhMIZFPokoYLbYdCJvnS1neOeIPeEOEzN1Vhq3cvxwAq5R06mq9joSyHGY9JZ9rLO_fFJCXcNcdgmrJy6upAZu_AJLgHvlFM5lVss_JSc3NZYGGJ-b2aGs257c6Q5MJnJ_BZEvOby_dYh5XaB74Pruxg4VtmBdHF9pcxdWNbUd8afteuMbNwcpCoyTT-VFxaXtecxr6125dH12NfP8DDSqT19_v0b6y_jktrZoauL1uyGoxn7OT8wk_P7aTcHCznU0ipLW3R5SMyXANQ5u2Z4Ng3KATdWhZ4Oa4aDMTuHy0emi0mlRnxpUbrHITuVV7usw3YHPTouHlIBwcgsVU5uV_-_YbU1uDTIybNyquQZLGySusG1MvK6LliLLnqVRQmvWr7z-vZeNju46LMVriWJIgK1h5ua7ADImmletPjEnv6UkymNMQ98rzNCYwAxkmP7bb6wB1YfcM7OZdH5CYOyiDQgEZkSmQFe4KyN7Tuug-soI2w0t_CADLi8kkibXZ2KFXzRqsnYu4zjzozZyH47PpflIGbGIFy8HAmJ2oCzUYZeeT5GA4WAEeoDMv247VOq-T0cpxirGvRtdTrUaHy-lKBeEkVefOTVw705Nm7BwHszXI2aKs7aFhzfRcW07V4_z0cLIo4ma1ZRcsVhfLmTdBg6JdNfrwMlAJum4n32sSDbThuhipLUNavcSVP_OqKXX2h9faJln2NfxuCZvOh-q34zaNUsx4__dLMgpoFHEsNdc6UUopbCFtVdvzHM-yPV1UkO6ahu51Zfz2VKfc62Panqm7rmcbjqk5uphHlvU3xwzr59ss3d43bMs19l3LdV2jq6kuaEBgvluCFySEMyb2TFxl_YqTyDQlFadpKPpwhxxWMGQwhMr909OfO5plpA==','knowledge_dat':null,'commit_tag_used':'v3_3938dd5'}],'data':{'nb_cols':128,'nb_lines':[[{'file_type':'class','nb_lines':49},{'file_type':'class','nb_lines':73},{'file_type':'class','nb_lines':98},{'file_type':'class','nb_lines':78},{'file_type':'class','nb_lines':65},{'file_type':'class','nb_lines':112},{'file_type':'class','nb_lines':78},{'file_type':'class','nb_lines':74},{'file_type':'class','nb_lines':104}]]},'toolchain_type':'gcc','only_emulators':false},'sign':131551,'license_key':'***'}",
+    "compilation_str": "{'compilation_dict':{'request_type':'library','api':{'env':'PROD','version':'v3'},'version':{'web_api':{'env':'PROD','version':'v3'},'local_api':{'version':'2026.03.05.0','platform':'win64'},'studio':'5.1.1'},'compilation_flags':{'float_abi':'hard','short_wchar':false,'fshort_enums':true,'use_knowledge':false},'mcu':'cortex-m33_st_stm32u5_nucleo-u575zi-q','sensor':'','accelerators':[],'request_origin':'manual','algorithm_type':'classifier','lib_version':'v3_3938dd5','info':{'progression':{'evals_done':20000,'optimization_progress':1.0,'elapsed_time':2565,'cpu_info':{'cpu_nb_cores':16,'cpu_nb_cores_for_optimization':11},'state':'finished'},'max_ram':786000,'max_flash':2048000,'optimization_global_id':'531dbea717723c376c9f2bdc7d6ac35c','version':{'local_api':'2026.03.05.0','studio':'5.1.1'},'creation_date':'2026-06-29T19:26:49+00:00'},'class_names':'OndaTriangular,OndaSinusoidal,OndaCuadrada','results':[{'result_id':17,'combination':{'type':'classification','name':'SVM','params':{'c':0.004803947420439124,'beta':5.0,'tmp_dir_path':null},'preprocessing_chain':[{'stft':{'windows':1,'window_type':'blackman'}},{'pca':{'explained_variance':0.98}}]},'model':null,'performance':{'performance':{'score':0.99,'main_kpi':1.0},'memory_usage':{'estimated_ram':2356,'estimated_flash':2688,'estimated_flash_knowledge':null}},'learning_min_lines':null,'knowledge':'eNqdWNmupEiW_JXWfR5K7EtL_QABBAQ7AQFEKYXY932nlP8-3JtdNT0zPV05_RRg8nM47n7M3Sx---jHpB-7KJmmos0-_vqXX3_7mOZ0vp5--yjafpn9uGiSdiq69gtr_Slo-jqZrjcCgf7jLxeSJsG8jF8QBJNfUJQHbZvUX9D3C-mW-f-dC0f_aaqoa-dk_1HhZ6l-0cZF9BXxK_jtGrBdQLf5U3Emf1T0dyzqkjQtoiJp5-krQRzMwfXwIaCTSDOEYDTdzYfVLFBLTrm576ni1t0ec8ZTIQNOAsp7SmPsBSpWz0L1DOD2OZ1hgk3u0ZyhVdGnh2UONbEascMBvoKy_KrXBLTSxXwHUw43d-LRJBoR6I8G3oh3Dx9uTCA7H0rlxC07eqZE99zXB-zmHh8X3mK19o4OPASGwzuOXlqMvBBELhffg_QZkb11libTcRIEm7tlQeq0pKb-XR9QBT2wkI3fxKDH6eL78YK0cHK2Uyq_72cjwdnsHFSWugM0rT4O1iNivG2VAF-gQ2XkQGhQO8nrWyVDDBbIkQ3lNUKXjT_Bd0D4k4PJFJTrPdVIjpYGhZW5MJMmEmFM6AFAKTEsIOXncWhRdYxDFBaTeIL6FJWGvk8lbGDS6YPGn-nG2_VG2e3m2wwl6koTyaB81Iag8VkSsIReSbNEJoFGgZ2OIJmGGjTRC7RWLKrNIoJxx6vN79xMyxY4YhDDP_Ydz1J_oP1MxqyN6M69pv0D5YFxknCBdD02R-lIL4WSiciOzbnNUB7b9TnGpjcSVO8CLmTa3WOMXY-cG3pmzj3co63VSHZDpl5RzzpLOL3IotoTtomZAvnKBdgdu0P0XRkRnU6Uidln8uWx20BrisVLpLbpGUUym3cSXf8aGJTZWJsYHYemRZqm__a3j6tX4_noPzv3I627YEbgT2zKgy_s16udv32RoLmYO01J7LdL0x9-MI7BcQ2YxyX5_v2Pjv9izX_1_--ZwzqIqiZoPz6H_vbRR8G_S_j_g6T_Dt-Jn6B78MXb65D6XICu_dc83hC7gAAFN6-tvvGtNnYGCNoQ8jKG2_wqkCVFzJsdSo49B0MbE-MwQS1XFM1omuGDN4dIgRwPCyqdWxV_JY2KeMrtHVhulRW0s9pYOq-IGHL6BQzJrkSUIYMKPA-oWdVWBOpNXFOOiHjaGx5whHK62xr3YqLBsUWJKUxOkD4x0OsOYO97NPo-hCp-uKDTwzHNh5m6AQ_FIaWoOExjo15mitPbkx1mpOO4zluZUgyHHFMoH07MCY9tUSgnhqjkCImIKztkqcQIB-Jc9IfRZFyMbBvLhHIhn0HY27k5vTUKJ3rU61CGZufebmScI1pxaY-0BXufuyDzLVp4LIbGmaGac0l9QiZ2zKeMUoe1328UAlo-B8Y2MEqtt7imrgrbsls79S5YThYy4mRCwTAJFgWMKAUTmYNa6dmrb6l8UcNyZ86OB2HyLahgTUJ4K0i33R1HkHBtHr_YhnoJXCMcBR8hqTuTqkqzLQrgm5ZrGRnkO34r0zb3NX73V48Jm8V5xlgu7QUuTn26PdauwcspsfnmAQ0lrgDmlveVDxcP-WGl0lET_O0NFq60uInACsT02kUwRI2hpNyp003GzPLeLyn6NTkBw8rLeo6mpsnvyVifHqnIWKMJPYQ1QpPnkNsBDA8c9itKI1tkoTPK2aly-jBZIAlCpaeOPyj0NeTDayvxzFTfvcbeYpYMjrsm9zdLAnktepWTNoOmvjt9zaNTsztnS1i7Y7OjBI-dBNNLeBPuAdCfaGc1aa2OLShYp9j3sWcDsVW2Rv1Ikpqf3mBi-lZgJ8a2dKaRGvnosiAvx7eGh8jw2cUbpSLBLqcUUt8Qn3dFWwXOswMAJgtmES1cAgeaJKuLIVs7JPNwh1a56-LjY4VOYTFZ5AY1no9iWTPBR1v3sew89ChA8JbD2xtCQw-kUh68xt31gh0kl1m8IyAL91bcwODE1eh1A2rPvjlV4J_McXjJI7coxoxbfGbBrSoMoqgqRal4904OWxitHNzj-FSRb0N9I8-Y9oFrOmqcsCfCPtsSM06UTEKaeZdFmg2r3VqYOA_x7CRrZikzu6Rie3OdMPHcpQKf9HVEoG1ZeDlJChQl2BPIg-iMpbb6CMoZrReoSV9mCezH02bvNQLiLvMIrUBkWi31Fbt0B7KyJ63yTsvaHD7b9aRpQTd8wmckX1SUlLYG1A41bksNmcd2TQqB5WFnddvM88POLVcg53KGlifpIh0NhdlbzF9E33q2WfDDuR9THL7YYwaXml7PLnCx_rw9PQp3Ilal0hKPyzEk294eZSc87gH_GthULBpE1tH3fC6AtyBP1cptit5qd38AyyvRy-Plea506JYky-gT5G1iqlP0zoqLtrfz8hy27Unewj6TGuaNCCQrrnp5Hws2sphjnKE10YJgyOUX95J1EyvXc1kfNejpXDH000aPuGvdWx1lnoEnR0qqk6nxOn3NZzCVPh9QaW8Sgj6OwbIAt4hXtyhBDHu4offQ2tjZSCXgKdpWS20noBl4jYuJEAhZqo2igzk5ALgUObPkGNG4n-GoylYPi6TReKKsWrEo9p2JmzYEXN0nGn5295uKO5HrRAG1G7Jcxxkg7DJdmjhehCF440g_9WwontdSlzdgw7ZGDfU24eegvCaYnvN5IxXmvMtlXxHFAOT1Sa3XIdqJ7JPH3l1zbLkGrmDDOhmeeJKsVpSL3G_nurJRPivFY8ceGZeu7bUcASrYFqaWiDjqsCQ18g1XOieiCqjPOJeQATo2yaSLBNVwNqDtpqZO43ervV78aPE8P7-UAdsH4F1a6YqBZB42uh5LzaH4GD-tT5_eqWLWNBhUTT-GxFF-I2hJCdWSY6zeQ9YpE_kZ2qAJgXi4eZPF3b1ZCVIdOAOmfWu0NfY5zIp4DQ_XLSQ1IyD3YdqvnVumLFbaejfe4FxQ1EDxZgi504sewvpa3e4eiVbR04XJPA2iseEVzdNeTwmxOkjknezgC0pTvGVFg01ULoGgOgiiGqDJPBiYULqnp74m49Q3owRhwKgjaHiyyClUFA63ujowtYq8eDag4BN9IOXt3LBetPLQ8k0Hbe-QIJQp1HatKxmHf_bFismTVEqNawGaER1zP5a1kNaIxpi3F-As-xsn67NDjrcsRvTJ08gSevREniIO4wcXF4uFyo98TdhL3HdqhWibnbQ8crZ-FjOAoxHp1XLOHKrbToCepM4RfUsmEmHIPE9WoKUNzhXzXZ8ubbtXu0auLRm9DkjekCCmp8ccsKK-wBaNIMxwpHbPzym2oLU39yGOjFJF7h2vnI7mcfEglJ5DY27l7sGYS-wOYxYdhBKWmTuoPL1LLaWiD4maehi08Ckq_1RTXsILR_9cVV4DmiRo_4Xe4mg69QFHyiKzJfKAc5JEozjkmcumhOxLZcmHrfLzbJymk3EVaCRa-mZ3ptyMcxUxTgX1YebWFweb9l7cKyc2uJoLJrU1kGVuOA0EzZlzwwdoym6jV88om1TWgpaXQeJ7BKrNu6VYnwNWg3yETGXoHJCzje_QxlkCeaVBq6SydwwnDBTkbvYTWdacpRhCNKgiGitlfVcqm545Zxz9WtqqWKwxG-T02xRSEeQUgHN4tqup3jgFqKtUhckeHDi478sbYp6tTwfIs2IKUsZlohJbu5husg8vzo39wWW2cpkcik0vVWlQ2bsBtTgLIfbdp9fx5OOVrb5e8IuF5pW_5oOsnJqkPMRSEIoY8F2c4oymDZr-0_38yc28tPY_imji-7dPNNn7OijaK2oNxiJoo8-U4C8U-f37Z9ami5P6hxgvsjao_Tpp_3DZ_yj3P-X9Dz_xdyP-Je-Xxo_q4Crq84vIhYTJVyNhv4BfJf-MPb_sIi2tvoS3-nLbnMsx91GkIJ3WlMtopupYU1EaYOf9OLSIYwK5dd6ch3XiwC7Fcemyns7LDGOjS4n3nrIQ7iM97MviVb3GwJrODlQIiXjuad5idszrbF-PUEEBz8OS-lr_n6EUDP3UFnytRZEWyfiHrUlSv0vTKfl0PODXGs7JGCX95ztA_kKSBA5TKIhdPwRIJQBIfFm4_x5I_M9A6BeSuPqIQHAYwkEUIeErEv8nkRD6v0MRCIYhFAVJGEVR4kfkt9-r99ug-fHny8d1aQfWZ89kSx2Mn-vxiTyLdpm6Ig7q35HbEsRjEAcf375__08nYx-4','knowledge_dat':null,'commit_tag_used':'v3_3938dd5'}],'data':{'nb_cols':128,'nb_lines':[[{'file_type':'class','nb_lines':49},{'file_type':'class','nb_lines':73},{'file_type':'class','nb_lines':98},{'file_type':'class','nb_lines':65},{'file_type':'class','nb_lines':112},{'file_type':'class','nb_lines':78},{'file_type':'class','nb_lines':74},{'file_type':'class','nb_lines':104},{'file_type':'class','nb_lines':78}]]},'toolchain_type':'gcc','only_emulators':false},'sign':221246,'license_key':'***'}",
     "compile_emulators": true,
     "compile_library": true,
     "data": {
@@ -34,10 +34,6 @@
                 },
                 {
                     "file_type": "class",
-                    "nb_lines": 78
-                },
-                {
-                    "file_type": "class",
                     "nb_lines": 65
                 },
                 {
@@ -55,14 +51,18 @@
                 {
                     "file_type": "class",
                     "nb_lines": 104
+                },
+                {
+                    "file_type": "class",
+                    "nb_lines": 78
                 }
             ]
         ]
     },
     "learning_min_lines": null,
     "lib_limited": false,
-    "library_id": "69cd90e9c369032cb04cd164",
-    "library_md5sum": "1a578c0140de624a82a34dedc6ab37b0",
+    "library_id": "6a42d2ced0d534775b050862",
+    "library_md5sum": "0c74d4dde753e188b0fd8f7cbf834629",
     "mcu": "cortex-m33_st_stm32u5_nucleo-u575zi-q",
     "mcu_cpn": "NUCLEO-U575ZI-Q",
     "mcu_display_name": "NUCLEO-U575ZI-Q - STMicroelectronics",
@@ -71,16 +71,16 @@
     "mcu_type": "cortex-m33",
     "mcu_vendor": "STMicroelectronics",
     "optimization_info": {
-        "creation_date": "2026-04-01T20:45:35+00:00",
+        "creation_date": "2026-06-29T19:26:49+00:00",
         "max_flash": 2048000,
         "max_ram": 786000,
-        "optimization_global_id": "4ff3d223124c2e6065a08437eee51212",
+        "optimization_global_id": "531dbea717723c376c9f2bdc7d6ac35c",
         "progression": {
             "cpu_info": {
                 "cpu_nb_cores": 16,
                 "cpu_nb_cores_for_optimization": 11
             },
-            "elapsed_time": 2539,
+            "elapsed_time": 2565,
             "evals_done": 20000,
             "optimization_progress": 1.0,
             "state": "finished"
@@ -92,9 +92,9 @@
     },
     "performance": {
         "memory_usage": {
-            "estimated_flash": 588,
+            "estimated_flash": 2688,
             "estimated_flash_knowledge": null,
-            "estimated_ram": 1816
+            "estimated_ram": 2356
         },
         "performance": {
             "main_kpi": 1.0,
