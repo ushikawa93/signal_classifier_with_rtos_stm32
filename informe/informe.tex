@@ -42,8 +42,12 @@
 
 Este informe describe el desarrollo de un sistema embebido capaz de generar, adquirir y clasificar señales en tiempo real utilizando una placa STM32 NUCLEO-U575ZI-Q. El proyecto combina técnicas de procesamiento digital de señales, sistemas operativos de tiempo real y aprendizaje automático embebido mediante NanoEdge AI Studio. El objetivo principal es identificar automáticamente diferentes formas de onda generadas por el propio sistema utilizando un modelo de clasificación ejecutado localmente en el microcontrolador. 
 
-El codigo es abierto y está disponible en \url{https://github.com/ushikawa93/signal_ classifier_with_rtos_stm32}.
+El codigo es abierto y está disponible en:
 
+\begin{itemize}
+	\item \url{https://github.com/ushikawa93/signal_classifier_with_rtos_stm32}.
+\end{itemize}
+ 
 \section{Objetivos}
 
 \begin{itemize}
@@ -155,7 +159,7 @@ A medida que se llena el buffer del ADC se disparan dos interrupciones que le av
 \item \textbf{Complete}. Las segundas 128 muestras del buffer están disponibles.
 \end{itemize}
 
-En esta etapa del desarrollo de este proyecto el procesamiento de los datos consiste en imprimir, si el usuario pidió datos desde la UART, los bloques correspondientes a través del puerto serie.
+En esta etapa del desarrollo del proyecto el procesamiento de los datos consiste simplemente en imprimir cierta cantidad de bloques a través del puerto UART cuando el usuario lo solicita.
 
 
 \section{Dataset para Entrenamiento}
@@ -181,7 +185,7 @@ Cuando el usuario lo pide se imprimen por puerto UART muestras en este formato. 
 
 \section{Entrenamiento con NanoEdge AI Studio}
 
-Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, ondas cuadradas y triangulares que fueron utilizadas para entrenar un modelo de clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido por el software se utilizaron scripts disponibles en la carpeta \texttt{/utils} del proyecto. En esta carpeta también hay disponible un script de matlab para graficar segmentos de las señales obtenidas y verificar su integridad.
+Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, ondas cuadradas y triangulares, que fueron utilizadas para entrenar un modelo de clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido por el software se utilizaron scripts disponibles en la carpeta \texttt{/utils} del proyecto. En esta carpeta también hay disponible un script de matlab para graficar segmentos de las señales obtenidas y verificar su integridad.
 
 \begin{itemize}
 	\item \textbf{Dataset utilizado:} Los datos específicos que se utilizaron para entrenar el modelo se encuentran en la carpeta \texttt{nanoEdgeAI/dat}.
@@ -206,7 +210,7 @@ Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinus
 
 El modelo generado fue integrado al firmware mediante las bibliotecas proporcionadas por NanoEdge AI Studio.
 
-El modelo se inicializa antes de lanzar las tareas, mediante la función \texttt{neai\_ classification\_init()} provista en la librería.
+El modelo se inicializa antes de lanzar las tareas, mediante la función \texttt{neai\_classification\_ init()} provista en la librería.
 
 Luego, dentro de la tarea que controla el UART en la librería, se agregó la clasificación de señales. En este punto, cuando es requerido por el usuario se utiliza la función \texttt{neai\_ classification()}, pasandole el contenido del buffer proveniente del ADC que este completo en ese momento (puede ser la primera o la segunda mitad del ADC\_BUF). Antes de utilizarse directamente las muestras se convierten de entero a punto flotante, por requerimientos de la librería.
 
@@ -234,7 +238,11 @@ Usando este esquema el sistema decide entre alguna de las tres ondas lo que esta
 
 \section{Migración a FreeRTOS}
 
-Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial, con modos configurados a través de \texttt{\#defines}. Esta implementación preliminar está disponible en \url{https://github.com/ushikawa93/signal_classifier_stm32}.
+Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial, con modos configurados a través de \texttt{\#defines}. Esta implementación preliminar está disponible en: 
+
+\begin{itemize}
+	\item \url{https://github.com/ushikawa93/signal_classifier_stm32}
+\end{itemize}
 
 Posteriormente se migró a FreeRTOS para mejorar la organización del software y desacoplar las distintas funcionalidades.
 
@@ -344,7 +352,7 @@ En la versión actual el sistema permite generar adquirir y clasificar señales 
 \item Mejorar el método de agregado de ruido del sistema.
 \item Incorporar señales externas.
 \item Agregar nuevas clases a la clasificación.
-\item Investigar la causa de la baja robustez de la clase OndaCuadrada ante niveles de ruido elevados. En este sentido puede considerarse reentrenar el sistema con datos ruidosos.
+\item Investigar la causa de la baja robustez de la clase \textit{OndaCuadrada} ante niveles de ruido elevados. En este sentido puede considerarse reentrenar el sistema con datos ruidosos.
 \item Entrenar un algoritmo de detección de anomalías en las señales.
 \item Probar el sistema con datos reales de sensores.
 \item Optimizar el consumo de RAM y Flash de la librería generada, evaluando el trade-off entre tamaño del modelo y exactitud.
