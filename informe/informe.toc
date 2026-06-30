@@ -13,6 +13,6 @@
 \contentsline {section}{\numberline {10}Implementación del Modelo en STM32}{6}{section.10}%
 \contentsline {section}{\numberline {11}Migración a FreeRTOS}{7}{section.11}%
 \contentsline {section}{\numberline {12}Aplicación de Monitoreo en Python}{7}{section.12}%
-\contentsline {section}{\numberline {13}Resultados}{7}{section.13}%
-\contentsline {section}{\numberline {14}Conclusiones}{8}{section.14}%
-\contentsline {section}{\numberline {15}Trabajo Futuro}{8}{section.15}%
+\contentsline {section}{\numberline {13}Resultados}{8}{section.13}%
+\contentsline {section}{\numberline {14}Conclusiones}{9}{section.14}%
+\contentsline {section}{\numberline {15}Trabajo Futuro}{9}{section.15}%

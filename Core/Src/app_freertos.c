@@ -188,14 +188,14 @@ void StartUartTask(void *argument)
 	for(;;){
 		printf(MENU_PRINCIPAL, nivel_ruido);
 		uint8_t opcion;
-		scanf("%c",&opcion);
+		scanf(" %c",&opcion);
 
 		switch (opcion){
 		case '1':
 		{
 			char input[16];
 
-			printf("\n\rIngrese numero de datos a adquirir ('c' para adquisicion continua)...\n\r");
+			printf("\n\rIngrese numero de datos a adquirir ('c' para adquisicion continua  [q para salir])...\n\r");
 
 			scanf("%15s", input);
 
@@ -220,24 +220,34 @@ void StartUartTask(void *argument)
 		{
 			float similarities[neai_get_number_of_classes()];
 			int id_class;
-			char *time = "00:00:00";
+			uint32_t flags;
 
-			if(buffer_completo_actualmente == 1)
-			{
-				for(int i = 0; i < 128; i++)
+			uint8_t tecla = uart_getchar_timeout(0);
+
+			while(tecla !='q' && tecla !='Q'){
+				xTaskNotifyWait(0,
+				                0xFFFFFFFF,
+				                &flags,
+				                portMAX_DELAY);
+				if(flags & ADC_HALF_READY)
 				{
-				    input_float[i] = (float)adc_buf[i];
+					for(int i = 0; i < 128; i++)
+					{
+						 input_float[i] = (float)adc_buf[i];
+					}
 				}
-			}else{
-				for(int i = 0; i < 128; i++)
-				{
-					input_float[i] = (float)adc_buf[i+128];
-				}
+	            if(flags & ADC_FULL_READY)
+	            {
+	                for(int i = 0; i < 128; i++)
+					{
+						input_float[i] = (float)adc_buf[i+128];
+					}
+	            }
+				neai_classification(input_float,similarities,&id_class);
+				char *time = convertir_a_tiempo(timer_tick);
+				printf("\n\r%s: Señal clasificada como %s con %d%% de confianza [q para salir] \n\r", time, neai_get_class_name(id_class), (int)(similarities[id_class] * 100));
+				tecla = uart_getchar_timeout(0);
 			}
-
-			neai_classification(input_float,similarities,&id_class);
-
-			printf("\r%s: Señal clasificada como %s con %d%% de confianza  [q=salir]    ", time, neai_get_class_name(id_class), (int)(similarities[id_class] * 100));
 			break;
 		}
 		case '3':
@@ -276,6 +286,12 @@ void StartUartTask(void *argument)
 				eSetBits
 			);
 			break;
+		}
+		case '6':
+		{
+		    printf("\n\rIniciando test sistematico...\n\r");
+		    test_clasificacion_sistematico();
+		    break;
 		}
 		default:
 			printf("\n\rOpcion incorrecta\n\r");
@@ -385,7 +401,7 @@ void StartAdcTask(void *argument)
 
 void procesar_adc(uint32_t * ptr_muestras,int n){
 
-	char *t = "00:00:00"; // Agregar un cronometro en el futuro
+	char *t = convertir_a_tiempo(timer_tick); // Agregar un cronometro en el futuro
 
 	printf("\r\n { \"ts\":%s , \"Muestras\": ",t);
 	for(int i =0; i < 128;i++){
@@ -404,11 +420,19 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     buffer_completo_actualmente = 1;
 
-    xTaskNotifyFromISR(adcTaskHandle,
-                       ADC_HALF_READY,
-                       eSetBits,
-                       &xHigherPriorityTaskWoken);
 
+    if((n_buffers_en_cola > 0)||(n_buffers_en_cola == -1)){
+    	xTaskNotifyFromISR(adcTaskHandle,
+   	                       ADC_HALF_READY,
+   	                       eSetBits,
+   	                       &xHigherPriorityTaskWoken);
+    }
+    else{
+    	xTaskNotifyFromISR(uartTaskHandle,
+   	                       ADC_HALF_READY,
+   	                       eSetBits,
+   	                       &xHigherPriorityTaskWoken);
+    }
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 
 }
@@ -423,12 +447,95 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     buffer_completo_actualmente = 2;
 
-    xTaskNotifyFromISR(adcTaskHandle,
-                       ADC_FULL_READY,
-                       eSetBits,
-                       &xHigherPriorityTaskWoken);
+    if((n_buffers_en_cola > 0)||(n_buffers_en_cola == -1)){
+        	xTaskNotifyFromISR(adcTaskHandle,
+        					   ADC_FULL_READY,
+       	                       eSetBits,
+       	                       &xHigherPriorityTaskWoken);
+        }
+        else{
+        	xTaskNotifyFromISR(uartTaskHandle,
+        					   ADC_FULL_READY,
+       	                       eSetBits,
+       	                       &xHigherPriorityTaskWoken);
+        }
 
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+}
+
+
+/* -------------------- Seccion Test sistemático -------------------- */
+void test_clasificacion_sistematico(void)
+{
+    float similarities[neai_get_number_of_classes()];
+    int id_class;
+    uint32_t flags;
+
+    uint32_t  niveles_ruido[] = {0, 100, 200, 500, 1000, 2000, 3000};
+    uint8_t  n_niveles       = sizeof(niveles_ruido) / sizeof(niveles_ruido[0]);
+    char    *nombres_señal[] = {"Sinusoidal", "Cuadrada", "Triangular"};
+
+    printf("\n\r=== TEST SISTEMATICO DE CLASIFICACION ===\n\r");
+    printf("Señal | Ruido | Clasificada como | Confianza\n\r");
+    printf("------+-------+------------------+----------\n\r");
+
+    for(uint8_t sig = 0; sig < 3; sig++)
+    {
+        // Cambiar señal del DAC
+        signal_idx = sig;
+        xTaskNotify(dacTaskHandle, DAC_WAVE, eSetBits);
+        osDelay(2000); // Esperar que el DAC estabilice
+
+        for(uint8_t niv = 0; niv < n_niveles; niv++)
+        {
+            // Cambiar nivel de ruido
+            nivel_ruido = niveles_ruido[niv];
+            xTaskNotify(dacTaskHandle, DAC_NOISE, eSetBits);
+            osDelay(2000); // Esperar que el DAC regenere la señal
+
+            // Esperar un buffer completo del ADC
+            xTaskNotifyWait(0, 0xFFFFFFFF, &flags, portMAX_DELAY);
+
+            if(flags & ADC_HALF_READY)
+            {
+                for(int i = 0; i < 128; i++)
+                    input_float[i] = (float)adc_buf[i];
+            }
+            else if(flags & ADC_FULL_READY)
+            {
+                for(int i = 0; i < 128; i++)
+                    input_float[i] = (float)adc_buf[i + 128];
+            }
+
+            neai_classification(input_float, similarities, &id_class);
+
+            printf("%-10s | %5lu | %-16s | %d%%\n\r",
+                   nombres_señal[sig],
+                   nivel_ruido,
+                   neai_get_class_name(id_class),
+                   (int)(similarities[id_class] * 100));
+        }
+    }
+
+    printf("\n\r=== FIN DEL TEST ===\n\r");
+
+    // Restaurar estado inicial
+    nivel_ruido = 0;
+    signal_idx  = 0;
+    xTaskNotify(dacTaskHandle, DAC_NOISE | DAC_WAVE, eSetBits);
+}
+
+
+static char* convertir_a_tiempo (int s)
+{
+	int segundos = s % 60;
+	int minutos = (s/60) % 60;
+	int horas = ((s/60)/60) % 24;
+
+	static char tiempo_formateado[9];
+	sprintf(tiempo_formateado,"%02d:%02d:%02d",horas,minutos,segundos);
+	return tiempo_formateado;
 
 }
 

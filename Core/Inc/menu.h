@@ -18,6 +18,7 @@
 "  3 - Configurar señales de DAC\r\n" \
 "  4 - Configurar frecuencia de DAC\r\n" \
 "  5 - Configurar nivel de ruido de DAC (actual: %ld)\r\n" \
+"  6 - Iniciar Test sistemático \r\n" \
 "========================================\r\n" \
 "Seleccione una opcion: "
 

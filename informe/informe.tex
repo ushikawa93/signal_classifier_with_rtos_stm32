@@ -3,6 +3,7 @@
 \usepackage[spanish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{hyperref}
@@ -11,6 +12,8 @@
 \usepackage{amsmath}
 \usepackage{subcaption}
 \usepackage{float}
+\usepackage{amssymb}
+\usepackage{xurl}
 
 \geometry{margin=2.5cm}
 
@@ -37,13 +40,9 @@
 
 \section{Introducción}
 
-Este informe describe el desarrollo de un sistema embebido capaz de generar, adquirir y clasificar señales en tiempo real utilizando una placa STM32 NUCLEO-U575ZI-Q.
+Este informe describe el desarrollo de un sistema embebido capaz de generar, adquirir y clasificar señales en tiempo real utilizando una placa STM32 NUCLEO-U575ZI-Q. El proyecto combina técnicas de procesamiento digital de señales, sistemas operativos de tiempo real y aprendizaje automático embebido mediante NanoEdge AI Studio. El objetivo principal es identificar automáticamente diferentes formas de onda generadas por el propio sistema utilizando un modelo de clasificación ejecutado localmente en el microcontrolador. 
 
-El proyecto combina técnicas de procesamiento digital de señales, sistemas operativos de tiempo real y aprendizaje automático embebido mediante NanoEdge AI Studio.
-
-El objetivo principal es identificar automáticamente diferentes formas de onda generadas por el propio sistema utilizando un modelo de clasificación ejecutado localmente en el microcontrolador.
-
-El proyecto está disponible en \url{https://github.com/ushikawa93/signal_classifier_with_rtos_stm32}.
+El codigo es abierto y está disponible en \url{https://github.com/ushikawa93/signal_ classifier_with_rtos_stm32}.
 
 \section{Objetivos}
 
@@ -85,11 +84,11 @@ La arquitectura implementada se basa en la generación de señales mediante DAC,
 
 \section{Interface de usuario (tarea \texttt{StartUartTask})}
 
-A través del puerto UART el sistema presenta al usuario un menú definido en el header \texttt{menu.h}. En este se le presentan las opciones:
+A través del puerto UART el sistema presenta al usuario un menú definido en el header \texttt{menú.h}. En este se le presentan las opciones:
 
 \begin{itemize}
-	\item 1 - Adquisicion (captura de datos)
-	\item 2 - Clasificacion
+	\item 1 - Adquisición (captura de datos)
+	\item 2 - Clasificación
 	\item 3 - Configurar señales de DAC
 	\item 4 - Configurar frecuencia de DAC
 	\item 5 - Configurar nivel de ruido de DAC
@@ -124,9 +123,9 @@ La tarea \texttt{StartDacTask} (definido en \texttt{app\_freertos.h}) junto con 
 
 Esta tarea comienza agregándole ruido a las LU tables (\texttt{generateSignalsWithNoise(int)}) y luego lanza el DAC por DMA. Este esquema tiene la limitación de que el ruido se calcula solo en este punto, por lo que todos los ciclos de la señal tienen los mismos esquemas de ruido (es decir, el ruido es periódico). En un futuro podría mejorarse este punto recalculando las tablas en alguna interrupción que se de al finalizar el buffer del DMA. 
 
-La transferencia memoria- DAC es disparada por el temporizador TIM2. POr defecto este timer esta configurado para generar una señal de 1 segundo de periodo, a partir de una LU table de 128 puntos (triggers cada 1/128 s). 
+La transferencia memoria- DAC es disparada por el temporizador TIM2. Por defecto este timer esta configurado para generar una señal de 1 segundo de periodo, a partir de una LU table de 128 puntos (triggers cada 1/128 s). 
 
-Esta tarea esta atenta a tres eventos que pueden disparase desde la UART que permiten mnodificar la forma de onda:
+Esta tarea esta atenta a tres eventos que pueden disparase desde la UART que permiten modificar la forma de onda:
 
 \begin{itemize}
 	\item \texttt{DAC\_WAVE}: Cambio de la forma de onda.
@@ -182,33 +181,17 @@ Cuando el usuario lo pide se imprimen por puerto UART muestras en este formato. 
 
 \section{Entrenamiento con NanoEdge AI Studio}
 
-Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, 
-ondas cuadradas y triangulares que fueron utilizadas para entrenar un modelo de 
-clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido 
-por el software se utilizaron scripts disponibles en la carpeta \texttt{/utils} del 
-proyecto. En esta carpeta también hay disponible un script de matlab para graficar 
-segmentos de las señales obtenidas y verificar su integridad.
+Utilizando la plataforma se adquirieron señales de distintas frecuencias, sinusoidales, ondas cuadradas y triangulares que fueron utilizadas para entrenar un modelo de clasificación en NanoEdge AI Studio. Para adaptar las señales al formato csv requerido por el software se utilizaron scripts disponibles en la carpeta \texttt{/utils} del proyecto. En esta carpeta también hay disponible un script de matlab para graficar segmentos de las señales obtenidas y verificar su integridad.
 
 \begin{itemize}
-	\item \textbf{Dataset utilizado:} Los datos específicos que se utilizaron para 
-	entrenar el modelo se encuentran en la carpeta \texttt{nanoEdgeAI/dat}.
+	\item \textbf{Dataset utilizado:} Los datos específicos que se utilizaron para entrenar el modelo se encuentran en la carpeta \texttt{nanoEdgeAI/dat}.
 	
-	\item \textbf{Número de clases:} El modelo se configuró con tres clases: 
-	\textit{OndaSinusoidal}, \textit{OndaCuadrada} y \textit{OndaTriangular}.
+	\item \textbf{Número de clases:} El modelo se configuró con tres clases: \textit{OndaSinusoidal}, \textit{OndaCuadrada} y \textit{OndaTriangular}.
 	
-	\item \textbf{Configuración del entrenamiento:} Se empleó la versión 5.1.1 de 
-	NanoEdge AI Studio sobre la plataforma NUCLEO-U575ZI-Q, con señales de 128 
-	columnas por muestra y 9 señales en total por clase. La búsqueda de la librería 
-	óptima se realizó mediante el benchmark automático (\textit{autoML}) de la 
-	herramienta, evaluando 17838 librerías candidatas durante 42 minutos con la 
-	configuración por defecto.
+	\item \textbf{Configuración del entrenamiento:} Se empleó la versión 5.1.1 de NanoEdge AI Studio sobre la plataforma NUCLEO-U575ZI-Q, con señales de 128 columnas por muestra. El dataset fue balanceado con 3 archivos de 60 muestras por archivo en cada clase (180 líneas por clase). La búsqueda de la librería óptima se realizó mediante el benchmark automático (\textit{autoML}) de la herramienta, evaluando 18199 librerías candidatas durante 43 minutos con la configuración por defecto.
 	
-	\item \textbf{Resultados obtenidos:} El benchmark finalizó seleccionando una 
-	librería con un \textit{Quality Index} de 99/100 puntos y una 
-	\textit{Balanced Accuracy} del 100\%, con un consumo de memoria de 2.4 KB de 
-	RAM (incluyendo buffer de 0.6 KB) y 2.7 KB de Flash. La matriz de confusión 
-	sobre el conjunto de validación no presentó ningún error de clasificación entre 
-	las tres clases, tal como se muestra en la Figura~\ref{fig:nanoedge_resultado}.
+	\item \textbf{Resultados obtenidos:} El benchmark finalizó seleccionando una librería con un \textit{Quality Index} de 99/100 puntos y una 
+	\textit{Balanced Accuracy} del 100\%, con un consumo de memoria de 1.7 KB de RAM (incluyendo buffer de 0.6 KB) y 7.8 KB de Flash. La matriz de confusión sobre el conjunto de validación no presentó ningún error de clasificación entre las tres clases (36 muestras correctamente clasificadas por clase), tal como se muestra en la Figura~\ref{fig:nanoedge_resultado}.
 \end{itemize}
 
 \begin{figure}[H]
@@ -223,22 +206,35 @@ segmentos de las señales obtenidas y verificar su integridad.
 
 El modelo generado fue integrado al firmware mediante las bibliotecas proporcionadas por NanoEdge AI Studio.
 
-El modelo se inicializa antes de lanzar las tareas, mediante la funcion \texttt{neai\_classification\_init()} provista en la librería.
+El modelo se inicializa antes de lanzar las tareas, mediante la función \texttt{neai\_ classification\_init()} provista en la librería.
 
-Luego, dentro de la tarea que controla el UART en la librería, se agregó la clasificación de señales. En este punto, cuando es requerido por el usuario se utiliza la función \texttt{neai\_classification()}, pasandole el contenido del buffer proveniente del ADC que este completo en ese momento (puede ser la primera o la segunda mitad del ADC\_BUF). Antes de utilizarse directamente las muestras se conviertes de entero a punto flotante, por requerimientos de la librería.
+Luego, dentro de la tarea que controla el UART en la librería, se agregó la clasificación de señales. En este punto, cuando es requerido por el usuario se utiliza la función \texttt{neai\_ classification()}, pasandole el contenido del buffer proveniente del ADC que este completo en ese momento (puede ser la primera o la segunda mitad del ADC\_BUF). Antes de utilizarse directamente las muestras se convierten de entero a punto flotante, por requerimientos de la librería.
 
 Usando este esquema el sistema decide entre alguna de las tres ondas lo que esta muestreando en el ADC, y expone los resultados junto con el nivel de similaridad obtenido.
 
+
 \begin{figure}[H]
 	\centering
-	\fbox{\parbox{0.8\textwidth}{\centering
-			Captura de pantalla de clasificador}}
-	\caption{Proceso de clasificación}
+	\begin{subfigure}[b]{0.7\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imagenes/Clasificacion1.png}
+		\caption{Clasificador ante una onda triangular}
+	\end{subfigure}
+	
+	\vspace{0.5cm}
+	
+	\begin{subfigure}[b]{0.7\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imagenes/Clasificacion2.png}
+		\caption{Clasificador ante una onda cuadrada}
+	\end{subfigure}
+	\caption{Capturas de pantalla del proceso de clasificación}
 \end{figure}
+
 
 \section{Migración a FreeRTOS}
 
-Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial, con modods configurados a través de \texttt{defines}. Esta implementación preeliminar está disponible en \url{https://github.com/ushikawa93/signal_classifier_stm32}.
+Inicialmente el sistema fue desarrollado utilizando una arquitectura secuencial, con modos configurados a través de \texttt{\#defines}. Esta implementación preliminar está disponible en \url{https://github.com/ushikawa93/signal_classifier_stm32}.
 
 Posteriormente se migró a FreeRTOS para mejorar la organización del software y desacoplar las distintas funcionalidades.
 
@@ -248,9 +244,7 @@ Posteriormente se migró a FreeRTOS para mejorar la organización del software y
 
 \section{Aplicación de Monitoreo en Python}
 
-Se desarrolló una aplicación de escritorio utilizando PySide6 para interactuar con el sistema.
-
-Las funcionalidades implementadas incluyen:
+Se desarrolló una aplicación de escritorio utilizando PySide6 para interactuar con el sistema. Las funcionalidades implementadas incluyen:
 
 \begin{itemize}
 \item Conexión serie.
@@ -267,14 +261,14 @@ Esta implementación está disponible en \texttt{/python\_gui}, con un ejecutabl
 	\begin{subfigure}[b]{0.48\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{imagenes/python_gui_1.png}
-		\caption{Descripción imagen 1}
+		\caption{Vista de consola}
 		\label{fig:img1}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.48\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{imagenes/python_gui_2.png}
-		\caption{Descripción imagen 2}
+		\caption{Vista de señales}
 		\label{fig:img2}
 	\end{subfigure}
 	\caption{Aplicación de Monitoreo en Python}
@@ -282,28 +276,55 @@ Esta implementación está disponible en \texttt{/python\_gui}, con un ejecutabl
 \end{figure}
 
 
-
 \section{Resultados}
 
-Presentar ejemplos de:
+Para evaluar la robustez del sistema de clasificación ante condiciones de ruido, se realizaron 5 repeticiones de un test sistemático que consistió en clasificar cada tipo de señal (sinusoidal, cuadrada y triangular) bajo niveles crecientes de ruido: 0, 100, 200, 500, 1000, 2000 y 3000 (en unidades DAC). Los resultados obtenidos se resumen en la Tabla~\ref{tab:resultados_clasificacion}.
 
-\begin{itemize}
-\item Señales adquiridas.
-\item Clasificaciones obtenidas.
-\item Nivel de confianza.
-\item Desempeño del sistema.
-\end{itemize}
+\begin{table}[H]
+	\centering
+	\caption{Resultados promedio de clasificación por señal y nivel de ruido (5 repeticiones)}
+	\label{tab:resultados_clasificacion}
+	\begin{tabular}{|c|c|c|c|c|}
+		\hline
+		\textbf{Señal} & \textbf{Ruido} & \textbf{Aciertos/5} & \textbf{Confianza prom.} & \textbf{Resultado} \\
+		\hline
+		Sinusoidal & 0    & 5/5 & 100\% & \checkmark \\
+		Sinusoidal & 100  & 5/5 & 99\%  & \checkmark \\
+		Sinusoidal & 200  & 5/5 & 100\% & \checkmark \\
+		Sinusoidal & 500  & 5/5 & 100\% & \checkmark \\
+		Sinusoidal & 1000 & 5/5 & 100\% & \checkmark \\
+		Sinusoidal & 2000 & 5/5 & 98\%  & \checkmark \\
+		Sinusoidal & 3000 & 5/5 & 98\%  & \checkmark \\
+		\hline
+		Cuadrada   & 0    & 4/5 & 81\%  & \checkmark \\
+		Cuadrada   & 100  & 5/5 & 93\%  & \checkmark \\
+		Cuadrada   & 200  & 4/5 & 85\%  & \checkmark \\
+		Cuadrada   & 500  & 5/5 & 100\% & \checkmark \\
+		Cuadrada   & 1000 & 4/5 & 99\%  & \checkmark \\
+		Cuadrada   & 2000 & 2/5 & 98\%  & $\times$   \\
+		Cuadrada   & 3000 & 0/5 & 99\%  & $\times$   \\
+		\hline
+		Triangular & 0    & 4/5 & 99\%  & \checkmark \\
+		Triangular & 100  & 5/5 & 99\%  & \checkmark \\
+		Triangular & 200  & 5/5 & 98\%  & \checkmark \\
+		Triangular & 500  & 5/5 & 99\%  & \checkmark \\
+		Triangular & 1000 & 5/5 & 100\% & \checkmark \\
+		Triangular & 2000 & 5/5 & 96\%  & \checkmark \\
+		Triangular & 3000 & 5/5 & 84\%  & \checkmark \\
+		\hline
+	\end{tabular}
+\end{table}
 
-\begin{figure}[H]
-\centering
-\fbox{\parbox{0.8\textwidth}{\centering
-Insertar resultados de clasificación}}
-\caption{Resultados obtenidos}
-\end{figure}
+La señal sinusoidal fue clasificada correctamente en el 100\% de los casos independientemente del nivel de ruido, manteniendo una confianza promedio superior al 98\% en todos los niveles evaluados. La señal triangular presentó un comportamiento igualmente robusto, con un único error de clasificación observado en el test 1 con ruido nulo, posiblemente debido a condiciones transitorias al inicio del ensayo.
+
+La señal cuadrada resultó ser la más sensible al ruido. Para niveles de hasta 1000 se obtuvo una tasa de aciertos aceptable, mientras que a partir de ruido 2000 el modelo comenzó a confundirla con la onda triangular, y con ruido 3000 la clasificación fue sistemáticamente incorrecta en los 5 tests, siendo identificada como onda sinusoidal en 4 de ellos. Este comportamiento es esperable dado que con ruido suficientemente elevado los flancos abruptos característicos de la onda cuadrada se suavizan, asemejando el espectro de otras formas de onda.
+
+En términos generales, el modelo demostró una alta capacidad de clasificación para niveles de ruido de hasta 1000, con una tasa de aciertos global del 93\% en ese rango. Por encima de ese umbral, el desempeño se degrada principalmente en la clase cuadrada.
+
 
 \section{Conclusiones}
 
-El proyecto permitió integrar distintas tecnologías dentro de una única plataforma embebida:
+El proyecto permitió ganar experiencia con la herramienta NanoEdgeAI y el entorno de desarrollo de STM32. El resultado final integra distintas tecnologías dentro de una única plataforma embebida:
 
 \begin{itemize}
 \item STM32.
@@ -314,16 +335,20 @@ El proyecto permitió integrar distintas tecnologías dentro de una única plata
 \item Aplicaciones de escritorio en Python.
 \end{itemize}
 
-Además, se obtuvo un sistema capaz de clasificar señales en tiempo real utilizando recursos limitados de procesamiento.
+
+En la versión actual el sistema permite generar adquirir y clasificar señales utilizando recursos limitados de procesamiento y constituye un punto de partida sólido para el trabajo futuro en estas plataformas. El sistema todavía tiene muchos puntos a mejorar pensando en su aplicación futura a temas de monitoreo atmosférico, que se detallan en la siguiente sección.
 
 \section{Trabajo Futuro}
 
 \begin{itemize}
+\item Mejorar el método de agregado de ruido del sistema.
 \item Incorporar señales externas.
-\item Agregar nuevas clases.
-\item Implementar FFT en tiempo real.
-\item Incorporar almacenamiento en memoria SD.
-\item Visualización remota mediante red.
+\item Agregar nuevas clases a la clasificación.
+\item Investigar la causa de la baja robustez de la clase OndaCuadrada ante niveles de ruido elevados. En este sentido puede considerarse reentrenar el sistema con datos ruidosos.
+\item Entrenar un algoritmo de detección de anomalías en las señales.
+\item Probar el sistema con datos reales de sensores.
+\item Optimizar el consumo de RAM y Flash de la librería generada, evaluando el trade-off entre tamaño del modelo y exactitud.
+\item Validar el sistema en un rango más amplio de frecuencias de muestreo y adquisición.
 \end{itemize}
 
 \end{document}

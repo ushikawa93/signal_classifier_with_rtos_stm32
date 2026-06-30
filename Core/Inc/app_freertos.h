@@ -47,6 +47,8 @@ extern TIM_HandleTypeDef htim15;
 extern DAC_HandleTypeDef hdac1;
 extern ADC_HandleTypeDef hadc1;
 
+extern uint32_t timer_tick;
+
 
 /* USER CODE END ET */
 
@@ -75,6 +77,9 @@ void StartAdcTask(void *argument);
 void StartUartTask(void *argument);
 
 void procesar_adc(uint32_t * ptr_muestras,int n);
+static uint8_t uart_getchar_timeout(uint32_t timeout_ms);
+void test_clasificacion_sistematico(void);
+static char * convertir_a_tiempo(int s);
 
 /* USER CODE END FunctionPrototypes */
 
